@@ -1,15 +1,31 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AppDispatch, RootState } from "../store";
-// import {
-//   setPasswordError,
-//   setPasswordSuccess,
-//   setSignInError,
-//   setUserInfoError,
-//   setUserInfoSuccess,
-//   signIn,
-//   updateUserData,
-// } from "./userSlice";
-// import Api from "../../api";
+import { FormFields } from "../../components/loginForm/loginForm";
+import { AppDispatch } from "../store";
+import { LoginResponse } from "./types";
+import { signIn } from "./userSlice";
+import Api from "../../utils/api";
+import axios, { AxiosError } from "axios";
+
+export const logIn = createAsyncThunk<
+  LoginResponse,
+  FormFields,
+  { rejectValue: string; dispatch: AppDispatch }
+>("user/logIn", async (data, { rejectWithValue, dispatch }) => {
+  let res;
+  try {
+    res = await Api.post(`/login`, data);
+    console.log("res", res);
+    dispatch(signIn(res.data));
+  } catch (err) {
+    console.log("error", err);
+    if (axios.isAxiosError(err)) {
+      return rejectWithValue(err.response?.data.message);
+    } else {
+      return new Error("Something goes wrong");
+    }
+  }
+  return res.data;
+});
 
 // export const updateUserInfo = createAsyncThunk<
 //   void,
@@ -62,21 +78,4 @@ import { AppDispatch, RootState } from "../store";
 //   const res = await Api.post(`users/sign-up`, data);
 //   console.log(res);
 //   return res;
-// });
-
-// export const logIn = createAsyncThunk<
-//   LoginResponse,
-//   LogInFormValues,
-//   { rejectValue: string; dispatch: AppDispatch }
-// >("user/logIn", async (data, { rejectWithValue, dispatch }) => {
-//   let res;
-//   try {
-//     res = await Api.post(`users/sign-in`, data);
-//     dispatch(signIn(res.data));
-//     dispatch(setSignInError(false));
-//   } catch {
-//     dispatch(setSignInError(true));
-//     return rejectWithValue("Error");
-//   }
-//   return res.data;
 // });
