@@ -1,32 +1,41 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { IProducts } from "../../types";
+import { getProducts } from "./actions";
 
 interface InitialState {
   products: IProducts[] | [];
+  error: string;
+  isLoading: boolean;
 }
 
 const initialState: InitialState = {
   products: [],
+  error: "",
+  isLoading: false,
 };
 
 export const productsSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    addProducts: (state, action) => {
+      state.products = action.payload.body;
+    },
+  },
   extraReducers: (builder) => {
-    // builder
-    //   .addCase(getSubscribes.pending, (state) => {
-    //     state.loading = true;
-    //     state.error = false;
-    //   })
-    //   .addCase(getSubscribes.fulfilled, (state, action) => {
-    //     state.subscribes = action.payload;
-    //     state.loading = false;
-    //     state.error = false;
-    //   })
-    //   .addCase(activateCode.pending, (state) => {
-    //     state.loading = true;
-    //   })
+    builder
+      .addCase(getProducts.pending, (state) => {
+        state.isLoading = true;
+        state.error = "";
+      })
+      .addCase(getProducts.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = "";
+      })
+      .addCase(getProducts.rejected, (state, action) => {
+        action.payload && (state.error = action.payload);
+        state.isLoading = false;
+      });
     //   .addCase(activateCode.fulfilled, (state, action) => {
     //     state.loading = false;
     //     console.log("payload", action.payload);
@@ -53,4 +62,4 @@ export const productsSlice = createSlice({
 
 export default productsSlice.reducer;
 
-export const {} = productsSlice.actions;
+export const { addProducts } = productsSlice.actions;

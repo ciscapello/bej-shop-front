@@ -1,6 +1,7 @@
 import store from "../store/";
 import axios, { AxiosInstance } from "axios";
-const baseUrl = "http://localhost:3000/api";
+
+export const baseUrl = "http://localhost:3000/api";
 
 class Api {
   private api: AxiosInstance;

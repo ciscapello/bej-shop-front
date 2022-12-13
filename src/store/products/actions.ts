@@ -1,7 +1,28 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-// import { AxiosResponse } from "axios";
-import { AppDispatch, RootState } from "../store";
-// import Api from "../../api";
+import Api from "../../utils/api";
+import axios, { AxiosResponse } from "axios";
+import { GetProductsResponse } from "./types";
+import { AppDispatch } from "../store";
+import { addProducts } from "./productsSlice";
+
+export const getProducts = createAsyncThunk<
+  GetProductsResponse[] | Error,
+  undefined,
+  { rejectValue: string; dispatch: AppDispatch }
+>("products/getProducts", async (_, { rejectWithValue, dispatch }) => {
+  let res: AxiosResponse<GetProductsResponse[]>;
+  try {
+    res = await Api.get(`products`);
+    dispatch(addProducts(res.data));
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return rejectWithValue(err.response?.data.message);
+    } else {
+      return new Error("Something goes wrong");
+    }
+  }
+  return res.data;
+});
 
 // export const buyProduct = createAsyncThunk<
 //   void,
@@ -27,20 +48,6 @@ import { AppDispatch, RootState } from "../store";
 //   });
 //   console.log(res);
 //   dispatch(getSubscribes());
-// });
-
-// export const getSubscribes = createAsyncThunk<
-//   Subscribe[],
-//   undefined,
-//   { rejectValue: string }
-// >("products/getSubscribes", async (_, { rejectWithValue }) => {
-//   const res: AxiosResponse<Subscribe[]> = await Api.get(`subscribe/self`);
-//   if (!res.data) {
-//     return rejectWithValue("Error");
-//   }
-//   const sortedData = res.data.sort((a, b) => a.id - b.id);
-//   console.log(sortedData);
-//   return sortedData;
 // });
 
 // export const activateCode = createAsyncThunk<

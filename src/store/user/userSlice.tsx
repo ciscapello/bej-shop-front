@@ -44,11 +44,11 @@ export const userSlice = createSlice({
         console.log(action);
         state.isLoading = false;
       })
-      .addCase(logIn.pending, (state, action) => {
+      .addCase(logIn.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       })
-      .addCase(logIn.fulfilled, (state, action) => {
+      .addCase(logIn.fulfilled, (state) => {
         state.isLoading = false;
         state.error = "";
       });

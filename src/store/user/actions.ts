@@ -4,10 +4,10 @@ import { AppDispatch } from "../store";
 import { LoginResponse } from "./types";
 import { signIn } from "./userSlice";
 import Api from "../../utils/api";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export const logIn = createAsyncThunk<
-  LoginResponse,
+  LoginResponse | Error,
   FormFields,
   { rejectValue: string; dispatch: AppDispatch }
 >("user/logIn", async (data, { rejectWithValue, dispatch }) => {
